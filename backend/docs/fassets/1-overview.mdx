@@ -1,0 +1,110 @@
+---
+title: FAssets
+description: FAssets is a trustless over-collateralized bridge to non smart contract networks to Flare.
+keywords: [fassets, xrp, bitcoin, dogecoin, flare-network]
+---
+
+import ThemedImage from "@theme/ThemedImage";
+import useBaseUrl from "@docusaurus/useBaseUrl";
+
+FAssets is a trustless, over-collateralized bridge connecting non smart contract networks to Flare.
+It enables the creation of wrapped tokens (`FAssets`) for assets like BTC, DOGE and XRP.
+These tokens can participate in Flare's DeFi ecosystem or be redeemed for their original assets.
+
+FAssets are powered by Flare's enshrined data protocols:
+
+- **[Flare Time Series Oracle (FTSO)](/ftso/overview):** Provides decentralized price feeds.
+- **[Flare Data Connector (FDC)](/fdc/overview):** Verifies off-chain actions, such as transactions on other blockchains.
+
+Each FAsset is backed by a mix of collateral, including:
+
+1. Stablecoin or ETH collateral.
+2. FLR (Flare's native token) or SGB (Songbird's native token) collateral.
+
+Agents and a community-provided collateral pool ensure trustlessness through over-collateralization.
+
+## FAsset Workflow
+
+<ThemedImage
+  alt="FTSO Update Architecture"
+  sources={{
+    light: useBaseUrl("img/fassets/flare_fassets_architecture_light.svg"),
+    dark: useBaseUrl("img/fassets/flare_fassets_architecture_dark.svg"),
+  }}
+/>
+
+Anyone on the Flare blockchain can mint FAssets, which are wrapped versions of original tokens from other blockchains, known as underlying networks. The original tokens from these chains, such as Bitcoin (BTC), Litecoin (LTC), Dogecoin (DOGE), and XRP, are referred to as underlying assets. For example, the FAsset version of Bitcoin is known as FBTC.
+
+### Minting
+
+    - A user (minter) selects an agent and pays a fee to reserve collateral.
+    - If the agent requires a handshake, the user's address is verified before proceeding with collateral reservation.
+    - The user sends the underlying asset (e.g., BTC) to the agent.
+    - The FDC verifies the transaction.
+    - The equivalent FAssets (e.g., FBTC) are minted as ERC-20 tokens on Flare.
+
+### Usage
+
+Minted FAssets can be used in DeFi applications on Flare or bridged to other chains.
+
+### Redeeming
+
+Users can redeem FAssets for the original underlying assets at any time.
+
+## Key Participants
+
+### Agents
+
+Agents manage the infrastructure and operations of the FAssets system, including:
+
+- Holding the underlying assets.
+- Providing collateral for minting and redemption.
+- Redeeming underlying assets for users.
+
+Each agent is verified through governance and uses the following addresses:
+
+- **Work Address:** A hot wallet for executing operations.
+- **Management Address:** A cold wallet for secure administrative actions.
+
+Agents must comply with the **backing factor**, which ensures sufficient collateral is locked to back FAssets.
+
+### Users
+
+Users interact with the system by:
+
+- **Minting:** Depositing underlying assets to mint FAssets.
+- **Redeeming:** Exchanging FAssets for the original underlying assets.
+
+Eligibility:
+
+- No restrictions—anyone can mint or redeem FAssets.
+
+### Collateral Providers
+
+Collateral providers supply native FLR tokens to an agent's collateral pool and earn a share of minting fees as long as their tokens remain locked.
+
+### Liquidators
+
+Liquidators maintain system health by:
+
+- Burning FAssets in exchange for collateral when an agent's collateral drops below the required minimum.
+- Earning rewards, including premiums on the collateral received.
+
+Eligibility:
+
+- Open to all—anyone can become a liquidator.
+
+### Challengers
+
+Challengers monitor agents for illegal transactions that reduce collateral below the backing factor. They:
+
+- Submit proof of illegal actions to the system.
+- Earn rewards from the agent's vault upon successful challenges.
+
+If an agent is found in violation, they enter **full liquidation**, permanently restricting them from new minting operations.
+
+:::tip[What's next]
+
+Learn more about the different components and processes involved in FAssets - [collateral](/fassets/collateral), [minting](/fassets/minting), [redemptions](/fassets/redemption), and [liquidations](/fassets/liquidation).
+
+:::

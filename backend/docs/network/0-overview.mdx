@@ -1,0 +1,388 @@
+---
+slug: overview
+title: Network
+description: Learn about the different Flare networks, configuration, supported wallets, transaction format, smart contracts, consensus, and more.
+keywords:
+  [flare-network, configuration, blockchain, data, smart-contracts, wallets]
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+import IconCopy from "@theme/Icon/Copy";
+import CodeBlock from "@theme/CodeBlock";
+import BlockNumCostonJS from "!!raw-loader!/examples/developer-hub-javascript/block_number_coston.js";
+import BlockNumFlareJS from "!!raw-loader!/examples/developer-hub-javascript/block_number_flare.js";
+import BlockNumCoston2JS from "!!raw-loader!/examples/developer-hub-javascript/block_number_coston2.js";
+import BlockNumSongbirdJS from "!!raw-loader!/examples/developer-hub-javascript/block_number_songbird.js";
+import BlockNumCostonPy from "!!raw-loader!/examples/developer-hub-python/block_number_coston.py";
+import BlockNumFlarePy from "!!raw-loader!/examples/developer-hub-python/block_number_flare.py";
+import BlockNumCoston2Py from "!!raw-loader!/examples/developer-hub-python/block_number_coston2.py";
+import BlockNumSongbirdPy from "!!raw-loader!/examples/developer-hub-python/block_number_songbird.py";
+import BlockNumCostonRs from "!!raw-loader!/examples/developer-hub-rust/src/bin/block_number_coston.rs";
+import BlockNumFlareRs from "!!raw-loader!/examples/developer-hub-rust/src/bin/block_number_flare.rs";
+import BlockNumCoston2Rs from "!!raw-loader!/examples/developer-hub-rust/src/bin/block_number_coston2.rs";
+import BlockNumSongbirdRs from "!!raw-loader!/examples/developer-hub-rust/src/bin/block_number_songbird.rs";
+import BlockNumCostonGo from "!!raw-loader!/examples/developer-hub-go/coston/block_number.go";
+import BlockNumFlareGo from "!!raw-loader!/examples/developer-hub-go/flare/block_number.go";
+import BlockNumCoston2Go from "!!raw-loader!/examples/developer-hub-go/coston2/block_number.go";
+import BlockNumSongbirdGo from "!!raw-loader!/examples/developer-hub-go/songbird/block_number.go";
+
+Flare has four networks, each serving different purposes, so choosing the right one is crucial. All of these networks operate on a permissionless basis and are EVM compatible:
+
+- **Flare Mainnet.** The production network where all the action happens. Transactions cost real money here.
+
+- **Flare Testnet Coston2.** Test your applications without spending real money. This should be your first choice when developing applications.
+
+- **Songbird Canary-Network.** Experimental proving ground for Flare.
+
+- **Songbird Testnet Coston.** The testnet for Songbird Canary-Network.
+
+The most common development tracks are:
+
+- **Flare Testnet Coston2 → Flare Mainnet**: Recommended track for application developers.
+
+- **Songbird Testnet Coston → Songbird Canary-Network → Flare Testnet Coston2 → Flare Mainnet**: Required track for all protocol level changes.
+
+## Configuration
+
+Configuration for all Flare networks, along with public and private RPCs, blockchain explorers, and faucets.
+
+<Tabs block groupId="network">
+  <TabItem value="flare" label="Flare Mainnet" default>
+
+    | Network name         | Flare Mainnet                                                                                                                                        |
+    | :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | RPCs (HTTPS)         | `https://flare-api.flare.network/ext/C/rpc` <br/> `https://stylish-light-theorem.flare-mainnet.quiknode.pro/ext/bc/C/rpc`                            |
+    | RPCs (WSS)           | `wss://flare-api.flare.network/ext/C/ws` <br/> `wss://stylish-light-theorem.flare-mainnet.quiknode.pro/ext/bc/C/ws`                               |
+    | Chain ID             | 14                                                                                                                                                   |
+    | Currency symbol      | FLR                                                                                                                                                  |
+    | Currency decimals    | 18                                                                                                                                                   |
+    | Blockchain Explorers | [`https://flarescan.com`](https://flarescan.com) <br/> [`https://flare-explorer.flare.network`](https://flare-explorer.flare.network)            |
+    | Faucets              | -                                                                                                                                                    |
+    | Bootstrapping nodes  | `https://flare-bootstrap.flare.network` <br/> `https://flare-bootstrap-1.staking.production.figment.io` <br/> `https://flare.senseinode.com` |
+    | \{Safe\}Wallet       | [`https://multisig.flare.network`](https://multisig.flare.network)                                                                                   |
+
+    :::tip[RPC Connection code snippet]
+    <Tabs block>
+      <TabItem value="curl" label="curl" default>
+
+        ```bash
+        curl https://flare-api.flare.network/ext/C/rpc -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+        ```
+
+      </TabItem>
+      <TabItem value="web3js" label="web3.js">
+
+        <CodeBlock language="javascript">
+          {BlockNumFlareJS}
+        </CodeBlock>
+
+      </TabItem>
+      <TabItem value="web3py" label="web3.py">
+
+        <CodeBlock language="python">
+          {BlockNumFlarePy}
+        </CodeBlock>
+
+      </TabItem>
+      <TabItem value="goethereum" label="go-ethereum">
+
+        <CodeBlock language="go">
+          {BlockNumFlareGo}
+        </CodeBlock>
+
+      </TabItem>
+      <TabItem value="alloyrs" label="alloy-rs">
+
+        <CodeBlock language="rust">
+          {BlockNumFlareRs}
+        </CodeBlock>
+
+      </TabItem>
+    </Tabs>
+    :::
+
+  </TabItem>
+  <TabItem value="coston2" label="Flare Testnet Coston2">
+
+    | Network name          | Flare Testnet Coston2                                                                                                                                                         |
+    | :-------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | RPCs (HTTPS)          | `https://coston2-api.flare.network/ext/C/rpc` <br/> `https://falling-skilled-uranium.flare-coston2.quiknode.pro/ext/bc/C/rpc`                                                                                                                              |
+    | RPCs (WSS)            | `wss://coston2-api.flare.network/ext/C/ws` <br/> `wss://falling-skilled-uranium.flare-coston2.quiknode.pro/ext/bc/C/ws`                                                                                                                              |
+    | Chain ID              | 114                                                                                                                                                                           |
+    | Currency symbol       | C2FLR                                                                                                                                                                         |
+    | Currency decimals     | 18                                                                                                                                                                            |
+    | Blockchain Explorers  | [`https://coston2.testnet.flarescan.com`](https://coston2.testnet.flarescan.com) <br/> [`https://coston2-explorer.flare.network`](https://coston2-explorer.flare.network) |
+    | Faucets               | [Coston2 Faucet](https://faucet.flare.network/coston2)                                                                                                                        |
+    | Bootstrapping nodes   | `https://coston2-bootstrap.flare.network`                                                                                                                                     |
+
+    :::tip[RPC Connection code snippet]
+    <Tabs block>
+      <TabItem value="curl" label="curl" default>
+
+        ```bash
+        curl https://coston2-api.flare.network/ext/C/rpc -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+        ```
+
+      </TabItem>
+      <TabItem value="web3js" label="web3.js">
+
+        <CodeBlock language="javascript">
+          {BlockNumCoston2JS}
+        </CodeBlock>
+
+      </TabItem>
+      <TabItem value="web3py" label="web3.py">
+
+        <CodeBlock language="python">
+          {BlockNumCoston2Py}
+        </CodeBlock>
+
+      </TabItem>
+      <TabItem value="goethereum" label="go-ethereum">
+
+        <CodeBlock language="go">
+          {BlockNumCoston2Go}
+        </CodeBlock>
+
+      </TabItem>
+      <TabItem value="alloyrs" label="alloy-rs">
+
+        <CodeBlock language="rust">
+          {BlockNumCoston2Rs}
+        </CodeBlock>
+
+      </TabItem>
+    </Tabs>
+    :::
+
+  </TabItem>
+    <TabItem value="songbird" label="Songbird Canary-Network">
+
+    | Network name         | Songbird Canary-Network                                                                                                                                           |
+    | :------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | RPC (HTTPS)          | `https://songbird-api.flare.network/ext/C/rpc`                                                                                                                    |
+    | RPC (WSS)            | `wss://songbird-api.flare.network/ext/C/ws`                                                                                                                    |
+    | Chain ID             | 19                                                                                                                                                                |
+    | Currency symbol      | SGB                                                                                                                                                               |
+    | Currency decimals    | 18                                                                                                                                                                |
+    | Blockchain Explorers | [`https://songbird.flarescan.com`](https://songbird.flarescan.com) <br/> [`https://songbird-explorer.flare.network`](https://songbird-explorer.flare.network) |
+    | Faucets              | -                                                                                                                                                                 |
+    | Bootstrapping nodes  | `https://songbird-bootstrap.flare.network`                                                                                                                        |
+
+    :::tip[RPC Connection code snippet]
+    <Tabs block>
+      <TabItem value="curl" label="curl" default>
+
+        ```bash
+        curl https://songbird-api.flare.network/ext/C/rpc -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+        ```
+
+      </TabItem>
+      <TabItem value="web3js" label="web3.js">
+
+        <CodeBlock language="javascript">
+          {BlockNumSongbirdJS}
+        </CodeBlock>
+
+      </TabItem>
+      <TabItem value="web3py" label="web3.py">
+
+        <CodeBlock language="python">
+          {BlockNumSongbirdPy}
+        </CodeBlock>
+
+      </TabItem>
+      <TabItem value="goethereum" label="go-ethereum">
+
+        <CodeBlock language="go">
+          {BlockNumSongbirdGo}
+        </CodeBlock>
+
+      </TabItem>
+      <TabItem value="alloyrs" label="alloy-rs">
+
+        <CodeBlock language="rust">
+          {BlockNumSongbirdRs}
+        </CodeBlock>
+
+      </TabItem>
+    </Tabs>
+    :::
+
+  </TabItem>
+  <TabItem value="coston" label="Songbird Testnet Coston">
+  
+    | Network name         | Songbird Testnet Coston                                                                                                                                                   |
+    | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+    | RPC (HTTPS)          | `https://coston-api.flare.network/ext/C/rpc`                                                                                                                              |
+    | RPC (WSS)            | `wss://coston-api.flare.network/ext/C/ws`                                                                                                                              |
+    | Chain ID             | 16                                                                                                                                                                        |
+    | Currency symbol      | CFLR                                                                                                                                                                      |
+    | Currency decimals    | 18                                                                                                                                                                        |
+    | Blockchain Explorers | [`https://coston.testnet.flarescan.com`](https://coston.testnet.flarescan.com) <br/> [`https://coston-explorer.flare.network`](https://coston-explorer.flare.network) |
+    | Faucets              | [Coston Faucet](https://faucet.flare.network/coston)                                                                                                                      |
+    | Bootstrapping nodes  | `https://coston-bootstrap.flare.network`                                                                                                                                  |
+
+    :::tip[RPC Connection code snippet]
+    <Tabs block>
+      <TabItem value="curl" label="curl" default>
+
+        ```bash
+        curl https://coston-api.flare.network/ext/C/rpc -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+        ```
+
+      </TabItem>
+      <TabItem value="web3js" label="web3.js">
+
+        <CodeBlock language="javascript">
+          {BlockNumCostonJS}
+        </CodeBlock>
+
+      </TabItem>
+      <TabItem value="web3py" label="web3.py">
+
+        <CodeBlock language="python">
+          {BlockNumCostonPy}
+        </CodeBlock>
+
+      </TabItem>
+      <TabItem value="goethereum" label="go-ethereum">
+
+        <CodeBlock language="go">
+          {BlockNumCostonGo}
+        </CodeBlock>
+
+      </TabItem>
+      <TabItem value="alloyrs" label="alloy-rs">
+
+        <CodeBlock language="rust">
+          {BlockNumCostonRs}
+        </CodeBlock>
+
+      </TabItem>
+    </Tabs>
+    :::
+
+  </TabItem>
+
+</Tabs>
+
+## Community tools
+
+Developer tools for Flare built by the community including RPCs, bridges, indexers, account abstraction, wallet SDKs, and more.
+
+<Tabs block groupId="network">
+  <TabItem value="flare" label="Flare Mainnet" default>
+
+    | RPCs                 | [QuickNode](https://www.quicknode.com/chains/flare), [Ankr](https://www.ankr.com/rpc/flare/), [Thirdweb](https://14.rpc.thirdweb.com), [ChainList<IconExternalLink/>](https://ChainList.org/chain/14)                                                                                                                                                                                                                                                                                                   |
+    | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+    | Bridging             | [LayerZero V2](https://docs.layerzero.network/v2/developers/evm/technical-reference/deployed-contracts#flare), [Stargate V2](https://stargateprotocol.gitbook.io/stargate/v/v2-developer-docs/technical-reference/mainnet-contracts#flare) ([OFTs](https://stargateprotocol.gitbook.io/stargate/v/v2-developer-docs/technical-reference/v2-supported-networks-and-assets#flare)), [zkBridge](https://docs.zkbridge.com/layerzero-zklightclient-configurations/layerzero-v2-zklightclient-dvn-addresses) |
+    | Indexers             | [Goldsky](https://docs.goldsky.com/chains/flare), [SubQuery](https://github.com/subquery/flare-subql-starter/tree/main/Flare/flare-starter), [sqd](https://docs.sqd.dev/subsquid-network/reference/networks/#evm--ethereum-compatible)                                                                                                                                                                                                                                                     |
+    | OAuth Login          | [Web3Auth](https://web3auth.io/docs/connect-blockchain/evm/flare)                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+    | Account Abstraction  | [Etherspot Prime SDK](https://etherspot.fyi/prime-sdk/intro)                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+    | Wallet SDK           | [Wagmi](https://wagmi.sh/react/chains), [RainbowKit](https://www.rainbowkit.com/docs/introduction)                                                                                                                                                                                                                                                                                                                                                                                                      |
+    | Full-stack Dev Infra | [Tenderly](https://tenderly.co)                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+
+  </TabItem>
+
+  <TabItem value="coston2" label="Flare Testnet Coston2">
+
+    |                 RPCs | [QuickNode](https://www.quicknode.com/chains/flare), [Ankr](https://www.ankr.com/rpc/flare/), [Thirdweb](https://114.rpc.thirdweb.com), [ChainList<IconExternalLink/>](https://ChainList.org/chain/114) |
+    | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+    |             Bridging | [LayerZero V2](https://docs.layerzero.network/v2/developers/evm/technical-reference/deployed-contracts#flare-testnet)                                                                                   |
+    |             Indexers | [Goldsky](https://docs.goldsky.com/chains/flare)                                                                                                                                           |
+    |          OAuth Login | [Web3Auth](https://web3auth.io/docs/connect-blockchain/evm/flare)                                                                                                                                       |
+    |  Account Abstraction | [Etherspot Prime SDK](https://etherspot.fyi/prime-sdk/intro)                                                                                                                                            |
+    |           Wallet SDK | [Wagmi](https://wagmi.sh/react/chains), [RainbowKit](https://www.rainbowkit.com/docs/introduction)                                                                                                      |
+    | Full-stack Dev Infra | [Tenderly](https://tenderly.co)                                                                                                                                                                         |
+
+  </TabItem>
+    <TabItem value="songbird" label="Songbird Canary-Network">
+
+    | RPCs                 | [Ankr](https://www.ankr.com/rpc/flare/), [Thirdweb](https://19.rpc.thirdweb.com), [ChainList<IconExternalLink/>](https://ChainList.org/chain/19) |
+    | :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- |
+    | Bridging             | -                                                                                                                                                |
+    | Indexers             | [SubQuery](https://github.com/subquery/flare-subql-starter/tree/main/Flare/songbird-starter)                                                     |
+    | OAuth Login          | [Web3Auth](https://web3auth.io/docs/connect-blockchain/evm/songbird/)                                                                            |
+    | Account Abstraction  | -                                                                                                                                                |
+    | Wallet SDK           | [Wagmi](https://wagmi.sh/react/chains), [RainbowKit](https://www.rainbowkit.com/docs/introduction)                                               |
+    | Full-stack Dev Infra | [Tenderly](https://tenderly.co)                                                                                                                  |
+
+  </TabItem>
+  <TabItem value="coston" label="Songbird Testnet Coston">
+
+    | RPCs                 | [Ankr](https://www.ankr.com/rpc/flare/), [Thirdweb](https://16.rpc.thirdweb.com), [ChainList<IconExternalLink/>](https://ChainList.org/chain/16) |
+    | :------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- |
+    | Bridging             | -                                                                                                                                                |
+    | Indexers             | -                                                                                                                                                |
+    | OAuth Login          | [Web3Auth](https://web3auth.io/docs/connect-blockchain/evm/songbird/)                                                                            |
+    | Account Abstraction  | -                                                                                                                                                |
+    | Wallet SDK           | [Wagmi](https://wagmi.sh/react/chains), [RainbowKit](https://www.rainbowkit.com/docs/introduction)                                               |
+    | Full-stack Dev Infra | [Tenderly](https://tenderly.co)                                                                                                                  |
+
+  </TabItem>
+
+</Tabs>
+
+## Supported wallets
+
+Several desktop, browser and mobile app based wallets support Flare. Discover suitable options for your needs on the [Flare Wallets](https://flare.network/wallets/) page.
+
+## Transaction format
+
+- **Address space:** Matches Ethereum, 20-byte addresses using ECDSA.
+
+- **Transaction format:** Matches Ethereum, complies with [EIP-2718](https://eips.ethereum.org/EIPS/eip-2718), encoded with [RLP](https://ethereum.org/en/developers/docs/data-structures-and-encoding/rlp/).
+
+- **Transaction fees:**
+
+  - **Type0** (Legacy) - Fee is calculated as `gasUsed * gasPrice`.
+
+  - **Type2** (EIP-1559) - Fee is calculated as `(baseFee + priorityFee) * gas`. Both the base and priority fees are burned.
+
+## Smart contracts
+
+- **RPC-API:** [Ethereum RPC API](https://ethereum.org/en/developers/docs/apis/json-rpc/)
+
+- **Supported opcodes:** All [opcodes](https://www.evm.codes/?fork=london) up to the London hard fork are supported.
+
+## Block verification
+
+- **Header:** [Verifying block header in Go](https://github.com/flare-foundation/go-flare/blob/main/coreth/consensus/dummy/consensus.go#L187).
+
+- **Body:** [Validating block body in Go](https://github.com/flare-foundation/go-flare/blob/main/coreth/core/block_validator.go#L62).
+
+- **Verify transaction in block:** Merkle Patricia Trie verification against the receipt root.
+
+## Consensus
+
+- **Sybil resistance mechanism:** Proof-of-Stake (PoS)
+
+- **Delegation:** In-protocol
+
+- **Block time:** ≈1.8 seconds
+
+- **Finality:** Single-slot. Once a block is validated through the gossip protocol, it is finalized.
+
+- **Transaction ordering:** Leaders' discretion, default behaviour is priority gas auction.
+
+- **Consensus mechanism:** Snowman++ (from [Avalanche](https://docs.avax.network)) offers a high-throughput, totally ordered consensus mechanism alongside a leader protocol to minimize MEV.
+
+- **Consensus participants:** Validators vote on block proposals and serve as leaders. To serve as a validator, a node must meet a governance defined [minimum self-bond](https://proposals.flare.network/FIP/FIP_5.html). Validators are randomly selected as leaders to propose new blocks. The probability of being elected leader is proportional to the validator's stake.
+
+- **Enshrined protocols:** In addition to consensus, Flare validators are also data providers for [FTSO](/ftso/overview) and attestation providers for [FDC](/fdc/overview).
+
+- **Stake distribution:** Network comprises [over 90 validators](https://flarescan.com/validators) with a median stake of ≈0.7% and a maximum stake of ≈3.3%. This includes both self-bonded and delegated stakes.
+
+:::note[Adding Flare's native token FLR to your exchange]
+
+Flare is just like Ethereum. To add it to your exchange:
+
+- Set up an [RPC node](/run-node/rpc-node)
+- Use the appropriate [network configuration](#configuration) for Flare Mainnet
+
+Additional info: [Media & Branding](https://flare.network/media/), [Flare source code](https://github.com/flare-foundation/go-flare)
+
+:::

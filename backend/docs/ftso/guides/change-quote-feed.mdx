@@ -1,0 +1,83 @@
+---
+title: Change quote feed
+tags: [intermediate, ftso, solidity]
+slug: change-quote-feed
+description: Change block-latency quote feeds using Solidity.
+keywords:
+  [
+    ftso,
+    oracle,
+    flare-time-series-oracle,
+    flare-network,
+    smart-contracts,
+    solidity,
+    remix,
+  ]
+sidebar_position: 3
+---
+
+import Remix from "@site/src/components/remix";
+import CodeBlock from "@theme/CodeBlock";
+import FtsoV2ChangeQuoteFeed from "!!raw-loader!/examples/developer-hub-solidity/FtsoV2ChangeQuoteFeed.sol";
+import SetEvmVersionRemix from "/static/img/set-evm-version-remix.png";
+
+This guide will show you how to fetch the latest feed values for two feeds and convert them to a new quote feed while retaining the number of decimals. For example, if you need the price of `BTC/ETH`, you can fetch the latest feed values for `BTC/USD` and `ETH/USD` and calculate the price of `BTC/ETH = (BTC/USD) / (ETH/USD)`.
+
+<CodeBlock language="solidity" title="FtsoV2ChangeQuoteFeed.sol">
+  {FtsoV2ChangeQuoteFeed}
+</CodeBlock>
+
+{/* prettier-ignore */}
+<Remix fileName="FtsoV2ChangeQuoteFeed.sol">Open in Remix</Remix>
+<br></br>
+
+:::warning[Don't use test interfaces in production]
+
+The `TestFtsoV2Interface` is for **testing only**, with all methods as `view` to allow rapid development without gas costs or state changes. For production, use [`FtsoV2Interface`](/ftso/solidity-reference/FtsoV2Interface), which includes `payable` methods required for real transactions and state modifications.
+Make the following changes to `FtsoV2ChangeQuoteFeed.sol`:
+
+```solidity
+import {ContractRegistry} from "@flarenetwork/flare-periphery-contracts/coston2/ContractRegistry.sol";
+import {FtsoV2Interface} from "@flarenetwork/flare-periphery-contracts/coston2/FtsoV2Interface.sol";
+
+contract FtsoV2ChangeQuoteFeed {
+  FtsoV2Interface internal ftsoV2;
+  constructor() {
+    ftsoV2 = ContractRegistry.getFtsoV2();
+  }
+  //...
+}
+```
+
+:::
+
+:::warning[Set EVM Version to London]
+
+- **Using Remix:** Set EVM version to `london` in the **Advanced Configurations** section of the **Solidity Compiler** tab:
+
+  {" "}
+
+  <img src={SetEvmVersionRemix} style={{ width: 300 }} />
+
+- **Using Hardhat or Foundry:** Set EVM version to `london` in [hardhat.config.ts](https://github.com/flare-foundation/flare-hardhat-starter/blob/master/hardhat.config.ts#L34) or [foundry.toml](https://github.com/flare-foundation/flare-foundry-starter/blob/master/foundry.toml).
+
+- **Using Standard Solidity JSON:** Set `evmVersion` to `london`:
+
+  ```json
+  {
+    "settings": {
+      "optimizer": {
+        /* ... */
+      },
+      "evmVersion": "london"
+    }
+  }
+  ```
+
+- **Using `solc` CLI:** Set `--evm-version` to `london`:
+
+  ```bash
+  solc --evm-version london <args>
+  ```
+
+:::

@@ -1,0 +1,248 @@
+---
+slug: flare-for-go-developers
+title: Flare for Go Devs
+authors: [dineshpinto]
+tags: [go, quickstart, solidity]
+description: Learn how to interact with Flare using geth.
+keywords: [go, quickstart, solidity, smart-contract, flare-network]
+sidebar_position: 5
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import CodeBlock from "@theme/CodeBlock";
+import FtsoV2FeedConsumerNoImports from "!!raw-loader!/examples/developer-hub-solidity/FtsoV2FeedConsumer_no_imports.sol";
+import ChainIdCoston2 from "!!raw-loader!/examples/developer-hub-go/coston2/chain_id.go";
+import ChainIdFlare from "!!raw-loader!/examples/developer-hub-go/flare/chain_id.go";
+import MakeQueryCoston2 from "!!raw-loader!/examples/developer-hub-go/coston2/make_query.go";
+import MakeQueryFlare from "!!raw-loader!/examples/developer-hub-go/flare/make_query.go";
+import CreateAccount from "!!raw-loader!/examples/developer-hub-go/create_account.go";
+import DeployContractCoston2 from "!!raw-loader!/examples/developer-hub-go/coston2/deploy_contract.go";
+import DeployContractFlare from "!!raw-loader!/examples/developer-hub-go/flare/deploy_contract.go";
+
+This guide is for developers who want to interact with Flare using Go. In this guide, using Go, you will learn how to:
+
+- Query a contract on Flare using the Go API for [Geth](https://github.com/ethereum/go-ethereum), a client that implements the full Ethereum JSON-RPC API.
+- Compile a Solidity contract using the CLI interface of [solc](https://github.com/ethereum/solidity), the Solidity compiler.
+- Deploy your compiled contract on Flare.
+
+:::tip
+
+All examples in this guide are available at [developer-hub/examples](https://github.com/flare-foundation/developer-hub/tree/main/examples).
+
+:::
+
+## Getting started
+
+Install Geth by following the instructions in the [Geth documentation](https://geth.ethereum.org/docs/getting-started/installing-geth). Also install the Solidity compiler by following the instructions in the [Solidity documentation](https://docs.soliditylang.org/en/latest/installing-solidity.html#linux-packages). The main commands are provided here:
+
+<Tabs>
+  <TabItem value="macos" label="MacOS via Homebrew" default>
+
+    ```bash
+    brew tap ethereum/ethereum
+    brew install ethereum solidity
+    ```
+
+  </TabItem>
+  <TabItem value="ubuntu" label="Ubuntu via PPAs">
+  
+    ```bash 
+    sudo add-apt-repository -y ppa:ethereum/ethereum
+    sudo apt update
+    sudo apt install ethereum solc
+    ```
+    
+  </TabItem>
+</Tabs>
+
+Add the `ethclient` and `keystore` packages to your Go project:
+
+```bash
+go get github.com/ethereum/go-ethereum/ethclient
+go get github.com/ethereum/go-ethereum/accounts/keystore
+```
+
+The folder structure of your Go project should look like:
+
+```plaintext
+developer-hub-go/
+├── coston2/
+│   └── *.go
+├── flare/
+│   └── *.go
+├── main.go
+├── go.mod
+└── go.sum
+```
+
+### Usage
+
+You need to connect to testnet or mainnet via an RPC, any RPC listed on the [Network Configuration](/network/overview#configuration) page will work. For this guide, you can use the Public RPC.
+
+<Tabs groupId="network">
+  <TabItem value="coston2" label="Flare Testnet Coston2" default>
+
+    <CodeBlock language="go" title="coston2/chain_id.go">
+      {ChainIdCoston2}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value="flare" label="Flare Mainnet">
+
+    <CodeBlock language="go" title="flare/chain_id.go">
+      {ChainIdFlare}
+    </CodeBlock>
+
+  </TabItem>
+</Tabs>
+
+## Querying a contract
+
+To query a contract, two pieces of information are required:
+
+- Contract address
+- Contract ABI (Application Binary Interface)
+
+For this example, you can use the `FlareContractRegistry` contract which has the same address `0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019` across both testnet and mainnet.
+
+### Fetch ABI
+
+To fetch a contract's ABI, copy the [FlareContractRegistry ABI](https://api.routescan.io/v2/network/testnet/evm/114/etherscan/api?module=contract&action=getabi&address=0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019&format=raw), and paste it into a file named `FlareContractRegistry.abi`, located in the root of your project, i.e. same level as `go.mod`.
+
+To generate the ABI bindings, which will be saved to `FlareContractRegistry.go`:
+
+<Tabs groupId="network">
+  <TabItem value="coston2" label="Flare Testnet Coston2" default>
+
+    ```bash
+    abigen --abi FlareContractRegistry.abi --pkg coston2 --type FlareContractRegistry --out coston2/FlareContractRegistry.go
+    ```
+
+  </TabItem>
+  <TabItem value="flare" label="Flare Mainnet">
+
+    ```bash
+    abigen --abi FlareContractRegistry.abi --pkg flare --type FlareContractRegistry --out flare/FlareContractRegistry.go
+    ```
+
+  </TabItem>
+</Tabs>
+
+### Make query
+
+You can now query the `FlareContractRegistry` contract to get the addresses of other Flare contracts.
+
+For example, querying it for the address of the `WNat` contract:
+
+<Tabs groupId="network">
+  <TabItem value="coston2" label="Flare Testnet Coston2" default>
+
+    <CodeBlock language="go" title="coston2/make_query.go">
+      {MakeQueryCoston2}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value="flare" label="Flare Mainnet">
+    
+    <CodeBlock language="go" title="flare/make_query.go">
+      {MakeQueryFlare}
+    </CodeBlock>
+
+  </TabItem>
+</Tabs>
+
+## Compiling with solc
+
+For this example, you can use the `FtsoV2FeedConsumer` contract to query the FTSOv2 feeds. Copy the `FtsoV2FeedConsumer` sample contract code given below, and save the `.sol` file in the same folder as your `go.mod`.
+
+<details>
+<summary>`FtsoV2FeedConsumer` sample contract</summary>
+
+Note that the contract interface dependencies have been inlined to avoid any import issues.
+
+<CodeBlock language="solidity" title="FtsoV2FeedConsumer.sol">
+  {FtsoV2FeedConsumerNoImports}
+</CodeBlock>
+
+</details>
+
+To compile the contract, use the Solidity compiler:
+
+```bash
+solc --evm-version london --abi --bin FtsoV2FeedConsumer.sol -o build
+```
+
+The compiled contract will be saved in the `build/` folder.
+
+## Create account
+
+Before deploying a contract, you need an account. You can create an account using the following code:
+
+<CodeBlock language="go" title="create_account.go">
+  {CreateAccount}
+</CodeBlock>
+
+This will generate a new account and save the keystore file in the current directory. The account address will be printed to the console.
+
+:::danger
+
+- Never share your private keys.
+- Never put your private keys in source code.
+- Never commit private keys to a Git repository.
+
+:::
+
+- For testnet, you can get free testnet C2FLR on the [Coston2 Faucet](https://faucet.flare.network/coston2).
+- For mainnet you will need to fund the account with FLR. You can buy FLR with regular currency in places like centralized exchanges, crypto on-ramps, or swap other tokens for FLR on decentralized exchanges.
+
+## Deploying with geth
+
+To deploy the contract, you need to first generate the contract bindings:
+
+<Tabs groupId="network">
+  <TabItem value="coston2" label="Flare Testnet Coston2" default>
+
+    ```bash
+    abigen --bin=build/FtsoV2FeedConsumer.bin --abi=build/FtsoV2FeedConsumer.abi --pkg coston2 --type FtsoV2FeedConsumer --out coston2/FtsoV2FeedConsumer.go
+    ```
+
+  </TabItem>
+  <TabItem value="flare" label="Flare Mainnet">
+    
+    ```bash
+    abigen --bin=build/FtsoV2FeedConsumer.bin --abi=build/FtsoV2FeedConsumer.abi --pkg flare --type FtsoV2FeedConsumer --out flare/FtsoV2FeedConsumer.go
+    ```
+
+  </TabItem>
+</Tabs>
+
+This will generate the `FtsoV2FeedConsumer.go` file, with the function `DeployFtsoV2FeedConsumer`.
+
+Copy the contents of the generated keystore file into the `key` constant in the following code:
+
+<Tabs groupId="network">
+  <TabItem value="coston2" label="Flare Testnet Coston2" default>
+
+    <CodeBlock language="go" title="deploy_contract.go">
+      {DeployContractCoston2}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value="flare" label="Flare Mainnet">
+
+    <CodeBlock language="go" title="deploy_contract.go">
+      {DeployContractFlare}
+    </CodeBlock>
+
+</TabItem>
+
+</Tabs>
+
+Congratulations! You have now successfully deployed a contract on Flare using Go.
+
+:::tip[What's next?]
+
+Learn how to interact with Flare's enshrined oracle [FTSOv2 using Go](/ftso/guides/read-feeds-offchain).
+
+:::

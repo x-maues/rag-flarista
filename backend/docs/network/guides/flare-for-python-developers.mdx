@@ -1,0 +1,259 @@
+---
+slug: flare-for-python-developers
+title: Flare for Python Devs
+authors: [dineshpinto]
+description: Learn how to interact with Flare using web3.py.
+tags: [python, quickstart, solidity]
+keywords: [python, web3.py, quickstart, solidity, smart-contract, flare-network]
+sidebar_position: 3
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import CodeBlock from "@theme/CodeBlock";
+import FtsoV2FeedConsumerNoImports from "!!raw-loader!/examples/developer-hub-solidity/FtsoV2FeedConsumer_no_imports.sol";
+import ChainIdCoston2 from "!!raw-loader!/examples/developer-hub-python/chain_id_coston2.py";
+import ChainIdFlare from "!!raw-loader!/examples/developer-hub-python/chain_id_flare.py";
+import FetchAbiCoston2 from "!!raw-loader!/examples/developer-hub-python/fetch_abi_coston2.py";
+import FetchAbiFlare from "!!raw-loader!/examples/developer-hub-python/fetch_abi_flare.py";
+import MakeQueryCoston2 from "!!raw-loader!/examples/developer-hub-python/make_query_coston2.py";
+import MakeQueryFlare from "!!raw-loader!/examples/developer-hub-python/make_query_flare.py";
+import CreateAccount from "!!raw-loader!/examples/developer-hub-python/create_account.py";
+import DeployContractCoston2 from "!!raw-loader!/examples/developer-hub-python/deploy_contract_coston2.py";
+import DeployContractFlare from "!!raw-loader!/examples/developer-hub-python/deploy_contract_flare.py";
+import Utils from "!!raw-loader!/examples/developer-hub-python/utils.py";
+import CompileContract from "!!raw-loader!/examples/developer-hub-python/compile_contract.py";
+
+This guide is for developers who want to interact with Flare using Python. In this guide, using Python, you will learn how to:
+
+- Query a contract on Flare using [web3.py](https://github.com/ethereum/web3.py), an async/sync library for interacting with Ethereum-like chains.
+- Compile a Solidity contract using [py-solc-x](https://github.com/ApeWorX/py-solc-x), a wrapper around the Solidity compiler.
+- Deploy your compiled contract on Flare.
+
+:::tip
+
+All examples in this guide are available at [developer-hub/examples](https://github.com/flare-foundation/developer-hub/tree/main/examples).
+
+:::
+
+## Getting started
+
+<Tabs groupId="python">
+  <TabItem value="uv" label="uv" default>
+
+    ```bash
+    uv add web3 py-solc-x
+    ```
+
+  </TabItem>
+  <TabItem value="pip" label="pip">
+  
+    ```bash
+    pip install web3 py-solc-x
+    ```
+
+  </TabItem>
+</Tabs>
+
+### Usage
+
+You need to connect to testnet or mainnet via an RPC, any RPC listed on the [Network Configuration](/network/overview#configuration) page will work. For this guide, you can use the Public RPC.
+
+<Tabs groupId="network">
+  <TabItem value="coston2" label="Flare Testnet Coston2" default>
+
+    <CodeBlock language="python" title="chain_id.py">
+      {ChainIdCoston2}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value="flare" label="Flare Mainnet">
+
+    <CodeBlock language="python" title="chain_id.py">
+      {ChainIdFlare}
+    </CodeBlock>
+
+  </TabItem>
+</Tabs>
+
+## Querying a contract
+
+To query a contract, two pieces of information are required:
+
+- Contract address
+- Contract ABI (Application Binary Interface)
+
+For this example, you can query the `FlareContractRegistry` contract which has the same address `0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019` across both testnet and mainnet.
+
+### Fetch ABI
+
+To fetch a contract's ABI programmatically, you can query the [Flare Blockchain Explorer API](https://flare-explorer.flare.network/api-docs):
+
+<Tabs groupId="network">
+  <TabItem value="coston2" label="Flare Testnet Coston2" default>
+
+    <CodeBlock language="python" title="fetch_abi.py">
+      {FetchAbiCoston2}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value="flare" label="Flare Mainnet">
+ 
+    <CodeBlock language="python" title="fetch_abi.py">
+      {FetchAbiFlare}
+    </CodeBlock>
+
+  </TabItem>
+</Tabs>
+
+### Make query
+
+You can now query the `FlareContractRegistry` contract to get the addresses of other Flare contracts.
+
+For example, querying it for the address of the `WNat` contract:
+
+<Tabs groupId="network">
+  <TabItem value="coston2" label="Flare Testnet Coston2" default>
+ 
+    <CodeBlock language="python" title="make_query.py">
+      {MakeQueryCoston2}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value="flare" label="Flare Mainnet">
+
+    <CodeBlock language="python" title="make_query.py">
+      {MakeQueryFlare}
+    </CodeBlock>
+
+  </TabItem>
+</Tabs>
+
+## Compiling a contract
+
+For this example, you can use the `FtsoV2FeedConsumer` contract to query the FTSOv2 feeds. Copy the `FtsoV2FeedConsumer` sample contract code given below, and save the `.sol` file in the same folder as your Python script.
+
+<details>
+<summary>`FtsoV2FeedConsumer` sample contract</summary>
+
+Note that the contract interface dependencies have been inlined to avoid any import issues.
+
+<CodeBlock language="solidity" title="FtsoV2FeedConsumer.sol">
+  {FtsoV2FeedConsumerNoImports}
+</CodeBlock>
+
+</details>
+
+### Set up utils
+
+To compile the contracts, you need to first set up some basic helper functions to read the `.sol` file and write the compiled output to a `.json` file. In a `utils.py` file, you can define the following functions:
+
+<CodeBlock language="python" title="utils.py">
+  {Utils}
+</CodeBlock>
+
+### Compile with py-solc-x
+
+With these functions ready, you can now compile the contract. In a `compile_contract.py` file, you can define the following code to install the correct version of the Solidity compiler and compile the contract:
+
+<CodeBlock language="python" title="compile_contract.py">
+  {CompileContract}
+</CodeBlock>
+
+You can now run the `compile_contract.py` script to compile the contract. The compiled output will be saved to `FtsoV2FeedConsumer.json`.
+
+<Tabs groupId="python">
+  <TabItem value="uv" label="uv" default>
+
+    ```bash
+    uv run compile_contract.py
+    ```
+
+  </TabItem>
+  <TabItem value="pip" label="pip">
+    ```bash 
+    python compile_contract.py 
+    ```
+
+  </TabItem>
+</Tabs>
+
+## Create account
+
+Before deploying a contract, you need to have an account with some testnet or mainnet gas tokens. You can create a new Flare account from the CLI:
+
+<CodeBlock language="python" title="create_account.py">
+  {CreateAccount}
+</CodeBlock>
+
+This will output a new private key and an account pair.
+
+:::danger
+
+- Never share your private keys.
+- Never put your private keys in source code.
+- Never commit private keys to a Git repository.
+
+:::
+
+You can save the account and private key into environment variables `ACCOUNT` and `ACCOUNT_PRIVATE_KEY` respectively.
+
+```bash
+export ACCOUNT=<address above>
+export ACCOUNT_PRIVATE_KEY=<private key above>
+```
+
+:::note
+
+You can also import the raw hex private key to MetaMask and any other wallet - the private key can be shared between your Python code and any number of wallets.
+
+:::
+
+- For testnet, you can get free testnet C2FLR on the [Coston2 Faucet](https://faucet.flare.network/coston2).
+- For mainnet you will need to fund the account with FLR. You can buy FLR with regular currency in places like centralized exchanges, crypto on-ramps, or swap other tokens for FLR on decentralized exchanges.
+
+## Deploying with web3.py
+
+With the functions and account ready, you can now deploy the contract. In a `deploy_contract.py` file, you can define the following code to deploy the contract:
+
+<Tabs groupId="network">
+  <TabItem value="coston2" label="Flare Testnet Coston2" default>
+
+    <CodeBlock language="python" title="deploy_contract.py">
+      {DeployContractCoston2}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value="flare" label="Flare Mainnet">
+
+    <CodeBlock language="python" title="deploy_contract.py">
+      {DeployContractFlare}
+    </CodeBlock>
+
+  </TabItem>
+</Tabs>
+
+You can now run the `deploy_contract.py` script to deploy the contract. The contract address will be printed once the deployment is successful. You can check the contract address on a Flare Blockchain Explorer, linked on the [Network Configuration](/network/overview#configuration) page.
+
+<Tabs groupId="python">
+  <TabItem value="uv" label="uv" default>
+    ```bash 
+    uv run deploy_contract.py 
+    ```
+
+  </TabItem>
+  <TabItem value="pip" label="pip">
+    ```bash 
+    python deploy_contract.py 
+    ```
+    
+  </TabItem>
+</Tabs>
+
+Congratulations! You have now successfully deployed a contract on Flare using Python 🐍.
+
+:::tip[What's next?]
+
+Learn how to interact with Flare's enshrined oracle [FTSOv2 using Python](/ftso/guides/read-feeds-offchain).
+
+:::

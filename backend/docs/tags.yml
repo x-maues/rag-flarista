@@ -1,0 +1,36 @@
+quickstart:
+  label: quickstart
+intermediate:
+  label: intermediate
+advanced:
+  label: advanced
+ftso:
+  label: ftso
+fdc:
+  label: fdc
+fassets:
+  label: fassets
+python:
+  label: python
+javascript:
+  label: javascript
+rust:
+  label: rust
+go:
+  label: go
+solidity:
+  label: solidity
+bitcoin:
+  label: bitcoin
+ethereum:
+  label: ethereum
+hardhat:
+  label: hardhat
+xrp:
+  label: xrp
+dogecoin:
+  label: dogecoin
+foundry:
+  label: foundry
+evm:
+  label: evm

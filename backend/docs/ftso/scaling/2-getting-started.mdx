@@ -1,0 +1,239 @@
+---
+sidebar_position: 2
+title: Getting Started
+description: Learn how to consume Scaling feeds on Flare.
+keywords:
+  [
+    ftso,
+    oracle,
+    flare-time-series-oracle,
+    flare-network,
+    smart-contracts,
+    solidity,
+  ]
+---
+
+import CodeBlock from "@theme/CodeBlock";
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+import Remix from "@site/src/components/remix";
+import FetchAnchorFeedsJs from "!!raw-loader!/examples/developer-hub-javascript/fetch_anchor_feeds.js";
+import FetchAnchorFeedsPy from "!!raw-loader!/examples/developer-hub-python/fetch_anchor_feeds.py";
+import FetchAnchorFeedsGo from "!!raw-loader!/examples/developer-hub-go/flare/fetch_anchor_feeds.go";
+import FetchAnchorFeedsRs from "!!raw-loader!/examples/developer-hub-rust/src/bin/fetch_anchor_feeds.rs";
+import FetchAndVerifyAnchorOnchainJs from "!!raw-loader!/examples/developer-hub-javascript/fetch_and_verify_anchor_onchain.js";
+import FetchAndVerifyAnchorOnchainPy from "!!raw-loader!/examples/developer-hub-python/fetch_and_verify_anchor_onchain.py";
+import FetchAndVerifyAnchorOnchainRs from "!!raw-loader!/examples/developer-hub-rust/src/bin/fetch_and_verify_anchor_onchain.rs";
+import FetchAndVerifyAnchorOnchainGo from "!!raw-loader!/examples/developer-hub-go/flare/fetch_and_verify_anchor_onchain.go";
+import FtsoV2AnchorFeedConsumer from "!!raw-loader!/examples/developer-hub-solidity/FtsoV2AnchorFeedConsumer.sol";
+
+Scaling enables offchain access to anchor feeds by leveraging Flare's network of 100 independent data providers and a robust commit-reveal process every 90 seconds.
+
+To read anchor feeds on Flare, follow these key steps:
+
+1. **Fetch anchor feed data offchain:**
+
+   Use the Data Availability (DA) Layer API to retrieve anchor feeds and their associated cryptographic proofs.
+
+2. **Verify the proof onchain:**
+
+   Validate the provided proof onchain to ensure the data matches the finalized version committed by [Scaling](/ftso/scaling/overview).
+
+3. **Use the feed data onchain:**
+
+   After verification, integrate the feed data into your onchain application logic.
+
+Scaling only stores **commitments to feed data** onchain. Complete feed data resides offchain but can be verified against an onchain Merkle root, ensuring data integrity and tamper resistance.
+
+## DA Layer API URLs
+
+:::warning[Rate limits]
+
+The public DA Layer endpoints are rate-limited. To request an API key for higher limits, create an [API Key Request Issue](https://github.com/flare-foundation/developer-hub/issues/new/choose).
+
+:::
+
+The DA Layer provides API endpoints for querying offchain data from Flare protocols.
+
+| Network                 | Base URL                                       |
+| ----------------------- | ---------------------------------------------- |
+| Flare Mainnet           | `https://flr-data-availability.flare.network/` |
+| Songbird Canary-Network | `https://sgb-data-availability.flare.network/` |
+
+All networks have the same API structure. For a full list of endpoints see [Data Availability API Reference](/fdc/reference/data-availability-api).
+
+## Fetching anchor feed data
+
+The DA Layer API allows querying values and proofs for multiple feeds from the same voting epoch in a single request. Use the `anchor-feeds-with-proof` POST endpoint to retrieve pricing data.
+
+To fetch the feed values for FLR/USD, BTC/USD, and ETH/USD at the latest voting round, use the following command:
+
+<Tabs>
+  <TabItem value="curl" label="curl" default>
+
+    ```bash
+    curl -X 'POST' \
+      'https://flr-data-availability.flare.network/api/v0/ftso/anchor-feeds-with-proof' \
+      -H 'accept: application/json' \
+      -H 'Content-Type: application/json' \
+      -d '{
+      "feed_ids": [
+        "0x01464c522f55534400000000000000000000000000",
+        "0x014254432f55534400000000000000000000000000",
+        "0x014554482f55534400000000000000000000000000"
+      ]
+    }'
+    ```
+
+  </TabItem>
+  <TabItem value="javascript" label="Javascript">
+
+    <CodeBlock language="javascript" title="fetch_anchor_feeds.js">
+      {FetchAnchorFeedsJs}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+    <CodeBlock language="python" title="fetch_anchor_feeds.py">
+      {FetchAnchorFeedsPy}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+    <CodeBlock language="go" title="fetch_anchor_feeds.go">
+      {FetchAnchorFeedsGo}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value="rust" label="Rust">
+
+    <CodeBlock language="Rust" title="fetch_anchor_feeds.rs">
+      {FetchAnchorFeedsRs}
+    </CodeBlock>
+
+  </TabItem>
+</Tabs>
+
+#### API response structure
+
+The response contains JSON objects for each feed, with the following fields:
+
+- `votingRoundId`: The voting round ID (each round lasts 90 seconds; see the [Flare Systems Explorer](https://flare-systems-explorer.flare.network/voting-epoch)).
+- `id`: The feed ID (refer to the [list of anchor feeds](/ftso/scaling/anchor-feeds)).
+- `value`: The integer value of the feed.
+- `turnoutBIPS`: The percentage of voting weight (in basis points) that contributed to the finalized value.
+- `decimals`: The number of decimal places for the feed.
+- `proof`: The Merkle proof array for data verification.
+
+#### Example Response (for BTC/USD)
+
+```json
+[
+  {
+    "body": {
+      "votingRoundId": 823386,
+      "id": "0x014254432f55534400000000000000000000000000",
+      "value": 9837867,
+      "turnoutBIPS": 9442,
+      "decimals": 2
+    },
+    "proof": [
+      "0x79b8a56bf66ae571ed4c0e3e1317825277c43f5ca3b5a85b834fb6407de03b63",
+      "...additional proof hashes..."
+    ]
+  }
+]
+```
+
+The floating point value of a feed can be calculated by dividing the `value` by 10^`decimals`. For example, if the feed value of BTC/USD is `6900420` and the decimal is `2`, the floating point feed value is `69004.20`.
+
+### Fetching Timestamps
+
+The `ftso/anchor-feeds-with-proof` endpoint returns a `votingRoundId`. Each voting round lasts for a fixed duration of **90 seconds**. To determine the **starting timestamp**, use the `fsp/status` GET endpoint:
+
+```bash
+curl -X 'GET' \
+  'https://flr-data-availability.flare.network/api/v0/fsp/status' \
+  -H 'accept: application/json'
+```
+
+:::warning
+
+- The timestamps returned correspond to the **start** of the voting round, which lasts for **90 seconds**.
+- Prices for a given voting round are finalized at the **end** of the round, calculated as `start_timestamp + 90s`.
+  :::
+
+#### Example Response
+
+```json
+{
+  "active": {
+    "voting_round_id": 839641,
+    "start_timestamp": 1733997690
+  },
+  "latest_fdc": {
+    "voting_round_id": -1,
+    "start_timestamp": -1
+  },
+  "latest_ftso": {
+    "voting_round_id": 839640,
+    "start_timestamp": 1733997600
+  }
+}
+```
+
+The response indicates that:
+
+- The **currently active voting round** has `voting_round_id` [839641](https://flare-systems-explorer.flare.network/voting-epoch/839641), which **started at** `1733997690`.
+- The **most recently finalized FTSO voting round** has `voting_round_id` [839640](https://flare-systems-explorer.flare.network/voting-epoch/839640), which **started at** `1733997600`.
+
+## Verifying proof onchain
+
+To verify feed data onchain, use the [`FtsoV2Interface`](/ftso/solidity-reference/FtsoV2Interface). This interface offers the [`verifyFeedData`](/ftso/solidity-reference/FtsoV2Interface#verifyfeeddata) method to validate feed data and proof against the onchain Merkle root.
+The function requires a single input struct [`FeedDataWithProof`](/ftso/solidity-reference/FtsoV2Interface#feeddatawithproof), which includes the feed data and voting round ID within the [`FeedData`](/ftso/solidity-reference/FtsoV2Interface#feeddata) struct, and a Merkle proof.
+
+An example contract verifying and consuming anchor feeds onchain
+
+<CodeBlock language="solidity" title="FtsoV2AnchorFeedConsumer.sol">
+  {FtsoV2AnchorFeedConsumer}
+</CodeBlock>
+
+{/* prettier-ignore */}
+<Remix fileName="FtsoV2AnchorFeedConsumer.sol">Open in Remix</Remix>
+
+## Fetching and verifying feeds
+
+The following example shows how to query feed and proof data from DA Layer and submit it to the onchain consumer:
+
+<Tabs>
+  <TabItem value="javascript" label="Javascript" default>
+
+    <CodeBlock language="javascript" title="fetch_and_verify_anchor_onchain.js">
+      {FetchAndVerifyAnchorOnchainJs}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value="python" label="Python">
+
+    <CodeBlock language="python" title="fetch_and_verify_anchor_onchain.py">
+      {FetchAndVerifyAnchorOnchainPy}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value="go" label="Go">
+
+    <CodeBlock language="go" title="fetch_and_verify_anchor_onchain.go">
+      {FetchAndVerifyAnchorOnchainGo}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value="rust" label="Rust">
+
+    <CodeBlock language="rust" title="fetch_and_verify_anchor_onchain.rs">
+      {FetchAndVerifyAnchorOnchainRs}
+    </CodeBlock>
+
+  </TabItem>
+</Tabs>

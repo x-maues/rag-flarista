@@ -1,0 +1,133 @@
+---
+title: Query feed configuration
+tags: [intermediate, ftso, python, rust, javascript, go]
+slug: query-feed-configuration
+description: Query feed configuration using JS, Python, Rust, or Go.
+keywords:
+  [
+    ftso,
+    oracle,
+    flare-time-series-oracle,
+    flare-network,
+    smart-contracts,
+    solidity,
+    remix,
+    metamask,
+  ]
+sidebar_position: 4
+---
+
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
+import CodeBlock from "@theme/CodeBlock";
+import FtsoConfigEthersJs from "!!raw-loader!/examples/developer-hub-javascript/ftsov2_config_coston2_ethers.js";
+import FtsoConfigWeb3Js from "!!raw-loader!/examples/developer-hub-javascript/ftsov2_config_coston2_web3.js";
+import FtsoConfigWeb3Py from "!!raw-loader!/examples/developer-hub-python/ftsov2_config_coston2.py";
+import FtsoConfigRust from "!!raw-loader!/examples/developer-hub-rust/src/bin/ftsov2_config_coston2.rs";
+import FtsoConfigGo from "!!raw-loader!/examples/developer-hub-go/ftsov2_config_coston2.go";
+
+This guide provides code examples demonstrating how to read FTSOv2 feed configurations offchain using various programming languages. To achieve this, you need two key pieces of information:
+
+1. **RPC Endpoint URL:** The RPC Endpoint URL determines which network your code will interact with. You can either use a node provider service or point to your [own RPC node](/run-node/rpc-node). A list of public and private RPC endpoints for all Flare networks is available on the [Network Configuration](/network/overview#configuration) page.
+
+2. **Contract Address:** The address for the `FastUpdatesConfiguration` contract varies by network. You can obtain this address in two ways:
+
+   - **From the Solidity Reference page:** Find the `FastUpdatesConfiguration` address for each network on the [Solidity Reference](/ftso/solidity-reference) page.
+
+     **OR**
+
+   - **Query the FlareContractRegistry Contract:** The `FlareContractRegistry` contract has the same address across all networks. You can query it to get the `FastUpdatesConfiguration` contract address. Refer to the specific language guides for examples:
+     - [JavaScript](/network/guides/flare-for-javascript-developers#make-query)
+     - [Python](/network/guides/flare-for-python-developers#make-query)
+     - [Rust](/network/guides/flare-for-rust-developers#make-query)
+     - [Go](/network/guides/flare-for-go-developers#make-query)
+
+:::tip
+
+All examples in this guide are available at [developer-hub/examples](https://github.com/flare-foundation/developer-hub/tree/main/examples).
+
+:::
+
+<Tabs block>
+  <TabItem value="web3js" label="web3.js" default>
+    This example user [web3.js](https://github.com/web3/web3.js) to retrieve FTSOv2 feed configurations on Flare Testnet Coston2.
+    
+    ```bash
+    npm install web3
+    ```
+
+    <CodeBlock language="javascript" title="ftsov2_config.js">
+      {FtsoConfigWeb3Js}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value="ethersjs" label="ethers.js">
+    This example uses [ethers.js](https://github.com/ethers-io/ethers.js/) to retrieve FTSOv2 feed configurations on Flare Testnet Coston2.
+    
+    ```bash
+    npm install ethers
+    ```
+    
+    <CodeBlock language="javascript" title="ftsov2_config.js">
+      {FtsoConfigEthersJs}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value="web3py" label="web3.py">
+
+    This example uses [web3.py](https://github.com/ethereum/web3.py) to retrieve FTSOv2 feed configurations on Flare Testnet Coston2.
+
+    <Tabs groupId="python">
+      <TabItem value="uv" label="uv" default>
+
+        ```bash
+        uv add web3
+        ```
+
+      </TabItem>
+      <TabItem value="pip" label="pip">
+
+        ```bash
+        pip install web3
+        ```
+
+      </TabItem>
+    </Tabs>
+
+    <CodeBlock language="python" title="ftsov2_config.py">
+      {FtsoConfigWeb3Py}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value="alloyrs" label="alloy-rs">
+
+    This example uses [alloy-rs](https://github.com/alloy-rs) to retrieve FTSOv2 feed configurations on Flare Testnet Coston2.
+
+    ```bash
+    cargo add alloy eyre tokio --features alloy/full,tokio/rt,tokio/rt-multi-thread,tokio/macros
+    ```
+    <CodeBlock language="rust" title="src/bin/ftsov2_config.rs">
+      {FtsoConfigRust}
+    </CodeBlock>
+
+  </TabItem>
+  <TabItem value="goethereum" label="go-ethereum">
+
+    This example uses the Go API from [Geth](https://geth.ethereum.org) to retrieve FTSOv2 feed configurations on Flare Testnet Coston2.
+
+    ```bash
+    go get github.com/ethereum/go-ethereum/ethclient
+    ```
+
+    With Go, you need to manually fetch the contract's ABI and generate the Go bindings. Copy the [FastUpdatesConfiguration ABI](https://api.routescan.io/v2/network/testnet/evm/114/etherscan/api?module=contract&action=getabi&address=0xE7d1D5D58cAE01a82b84989A931999Cb34A86B14&format=raw) and paste it into a file named `FastUpdatesConfiguration.abi`, located in the root of your project, i.e. same level as `go.mod`. Then using [abigen](https://geth.ethereum.org/docs/tools/abigen), generate the Go bindings.
+
+    ```bash
+    abigen --abi FastUpdatesConfiguration.abi --pkg main --type FastUpdatesConfiguration --out FastUpdatesConfiguration.go
+    ```
+
+    <CodeBlock language="go" title="ftsov2_config.go">
+      {FtsoConfigGo}
+    </CodeBlock>
+
+  </TabItem>
+</Tabs>

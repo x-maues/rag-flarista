@@ -1,0 +1,67 @@
+---
+slug: faqs
+title: FAQs
+description: Frequently asked questions when building on Flare.
+keywords: [faq, frequently-asked-questions, flare-network, support]
+---
+
+import SetEvmVersionRemix from "/static/img/set-evm-version-remix.png";
+
+### Why am I getting `invalid opcode: opcode 0x5f not defined`?
+
+Flare supports EVM versions up to London, which does not support the `PUSH0` opcode, leading to this error. To fix this:
+
+- **Using Remix:** Set EVM version to `london` in the **Advanced Configurations** section of the **Solidity Compiler** tab:
+
+  <img src={SetEvmVersionRemix} style={{ width: 300 }} />
+
+- **Using Hardhat or Foundry:** Set EVM version to `london` in [hardhat.config.ts](https://github.com/flare-foundation/flare-hardhat-starter/blob/master/hardhat.config.ts#L34) or [foundry.toml](https://github.com/flare-foundation/flare-foundry-starter/blob/master/foundry.toml).
+
+- **Using Standard Solidity JSON:** Set `evmVersion` to `london`:
+
+  ```json
+  {
+    "settings": {
+      "optimizer": {
+        /* ... */
+      },
+      "evmVersion": "london"
+    }
+  }
+  ```
+
+- **Using `solc` CLI:** Set `--evm-version` to `london`:
+
+  ```bash
+  solc --evm-version london <args>
+  ```
+
+### Where can I get Flare testnet tokens?
+
+You can get:
+
+- Testnet C2FLR from the [Coston2 Faucet](https://faucet.flare.network/coston2).
+
+- Testnet CFLR from the [Coston Faucet](https://faucet.flare.network/coston).
+
+To understand the difference between Coston and Coston2, see the [Network Configuration](/network/overview#configuration) page.
+
+### I have a project I would like to build on Flare. Can I get a grant?
+
+Yes! Grants from the Flare Foundation are designed to support innovative and impactful projects in order to accelerate the growth of the Flare ecosystem. Whether you're an independent innovator or part of a larger team, if you believe that you can make valuable contributions to the Flare ecosystem, we'd like to hear from you.
+
+Learn more about [Grants](https://flare.network/grants/).
+
+### Where can I get technical support?
+
+Connect with the rapidly growing community of developers building on Flare.
+
+- Engage with Flare's developer community on [Telegram](https://t.me/FlareNetwork).
+
+- Contribute to Flare's open-source codebase on [GitHub](https://github.com/flare-foundation/).
+
+- Join the community on [Discord](https://discord.com/invite/flarenetwork).
+
+### Where can I learn about Flare-specific terminology?
+
+Learn more about the terminology used in the Flare ecosystem on the [Terminology](/support/terminology) page.
