@@ -1,20 +1,22 @@
-# Flare RAG Project - User Guide
+![Demo](refimg.png)
+# Flarista - User Guide 🌟
 
-## Overview 🚀
+## An RAG Chatbot 📚
 
-This project is a **Retrieval-Augmented Generation (RAG)** application.
-It enhances the capabilities of language models by allowing them to access and incorporate information from external sources.
+This project is a **Retrieval-Augmented Generation (RAG)** application. 💻
+It enhances the capabilities of language models by allowing them to access and incorporate information from external sources (Technical documentation in this case).
+
 This application combines:
     - A backend API built with Python and Flask 🐍
     - A user interface built with Next.js and React ⚛️
 
-Users can interact with a language model through this application, receiving responses that are enriched with relevant external knowledge, making the conversations more informative and context-aware.
+Developer can benefit from this application, without having to get stuck in the docs. They can easily harness LLMS to provide relevant explainations, code, etc.
 
 ## Technologies Used 🛠️
 
 - **Core RAG Components:**
     - **Langchain:**  A framework for developing applications powered by language models. It's used here to orchestrate the RAG pipeline, connecting the language model with the knowledge retrieval process.
-    - **Gemini Model:** A powerful language model from Google, used to generate responses. In this project, Gemini is the model that answers user queries, informed by retrieved external knowledge.
+    - **Gemini Model:** A powerful language model from Google, used to generate responses. In this project, Gemini is the model that answers user queries, informed by retrieved external knowledge. (feel free to use any model)
 
 - **Frontend:**
     - Next.js (React framework)
@@ -27,7 +29,7 @@ Users can interact with a language model through this application, receiving res
     - Flask (web framework)
     - pip (package installer for Python)
 
-## User Guide
+## User Guide 🚀
 
 This guide will walk you through setting up and running the Flare RAG project on your local machine.
 
@@ -76,7 +78,7 @@ cd flare-rag
   ```bash
   python app.py
   ```
-  The backend server should now be running, typically on `http://127.0.0.1:5000`.
+  The backend server should now be running, typically on `http://127.0.0.1:8000`.
 
 **3. Setup the Frontend:**
 
@@ -95,7 +97,7 @@ cd flare-rag
   The frontend application should now be running, typically on `http://localhost:3000`.
 
 **4. Access the Application:**
-
+ 
 - Open your web browser and go to `http://localhost:3000` to access the Flare RAG application.
 
 ### Using the Application
@@ -112,10 +114,4 @@ If you wish to contribute to this project, please follow these steps:
 4. Push your changes to your fork.
 5. Submit a pull request to the main repository.
 
-## License
-
-[Specify the license for your project here, e.g., MIT License, Apache 2.0, etc.]
-
----
-
-**Note:** Replace `<repository_url>` with the actual URL of your project's Git repository.
+Hope this comes handy!
